@@ -11,9 +11,9 @@ namespace HighEnergy.Controls
     // analog to ITreeNode<T>
     public partial class TreeNodeView : StackLayout
     {
-        Grid MainLayoutGrid;
-        ContentView HeaderView;
-        StackLayout ChildrenStackLayout;
+        Grid _mainLayoutGrid;
+        ContentView _headerView;
+        StackLayout _childrenStackLayout;
 
         TreeNodeView ParentTreeNodeView { get; set; }
 
@@ -29,7 +29,7 @@ namespace HighEnergy.Controls
                 try
                 {
                     // show or hide all children
-                    node.ChildrenStackLayout.IsVisible = node.IsExpanded;
+                    node._childrenStackLayout.IsVisible = node.IsExpanded;
                 }
                 finally
                 {
@@ -47,15 +47,15 @@ namespace HighEnergy.Controls
 
         public View HeaderContent
         {
-            get { return HeaderView.Content; }
-            set { HeaderView.Content = value; }
+            get { return _headerView.Content; }
+            set { _headerView.Content = value; }
         }
 
         public IEnumerable<TreeNodeView> ChildTreeNodeViews
         {
             get
             {
-                foreach (TreeNodeView view in ChildrenStackLayout.Children)
+                foreach (TreeNodeView view in _childrenStackLayout.Children)
                     yield return view;
 
                 yield break;
@@ -64,11 +64,11 @@ namespace HighEnergy.Controls
 
         protected void DetachVisualChildren()
         {
-			var views = ChildrenStackLayout.Children.OfType<TreeNodeView>().ToList();
+			var views = _childrenStackLayout.Children.OfType<TreeNodeView>().ToList();
 
 			foreach (TreeNodeView nodeView in views)
             {
-                ChildrenStackLayout.Children.Remove(nodeView);
+                _childrenStackLayout.Children.Remove(nodeView);
                 nodeView.ParentTreeNodeView = null;
             }
         }
@@ -94,14 +94,14 @@ namespace HighEnergy.Controls
             BuildVisualChildren();
         }
 
-        Func<View> _HeaderCreationFactory;
+        Func<View> _headerCreationFactory;
         public Func<View> HeaderCreationFactory
         {
             // [recursive up] inherit property value from parent if null
             get
             { 
-                if (_HeaderCreationFactory != null)
-                    return _HeaderCreationFactory;
+                if (_headerCreationFactory != null)
+                    return _headerCreationFactory;
 
                 if (ParentTreeNodeView != null)
                     return ParentTreeNodeView.HeaderCreationFactory;
@@ -110,14 +110,14 @@ namespace HighEnergy.Controls
             }
             set
             {
-                if (value == _HeaderCreationFactory)
+                if (value == _headerCreationFactory)
                     return;
 
-                _HeaderCreationFactory = value;
+                _headerCreationFactory = value;
                 OnPropertyChanged("HeaderCreationFactory");
 
                 // wait until both factories are assigned before constructing the visual tree
-                if (_HeaderCreationFactory == null || _NodeCreationFactory == null)
+                if (_headerCreationFactory == null || _nodeCreationFactory == null)
                     return;
 
                 BuildHeader();
@@ -125,14 +125,14 @@ namespace HighEnergy.Controls
             }
         }
 
-        Func<TreeNodeView> _NodeCreationFactory;
+        Func<TreeNodeView> _nodeCreationFactory;
         public Func<TreeNodeView> NodeCreationFactory
         {
             // [recursive up] inherit property value from parent if null
             get
             { 
-                if (_NodeCreationFactory != null)
-                    return _NodeCreationFactory;
+                if (_nodeCreationFactory != null)
+                    return _nodeCreationFactory;
 
                 if (ParentTreeNodeView != null)
                     return ParentTreeNodeView.NodeCreationFactory;
@@ -141,14 +141,14 @@ namespace HighEnergy.Controls
             }
             set
             {
-                if (value == _NodeCreationFactory)
+                if (value == _nodeCreationFactory)
                     return;
 
-                _NodeCreationFactory = value;
+                _nodeCreationFactory = value;
                 OnPropertyChanged("NodeCreationFactory");
 
                 // wait until both factories are assigned before constructing the visual tree
-                if (_HeaderCreationFactory == null || _NodeCreationFactory == null)
+                if (_headerCreationFactory == null || _nodeCreationFactory == null)
                     return;
 
                 BuildHeader();
@@ -188,7 +188,7 @@ namespace HighEnergy.Controls
             {
                 // perform removal in a batch
                 foreach (TreeNodeView nodeView in nodeViewsToRemove)
-                    MainLayoutGrid.Children.Remove(nodeView);
+                    _mainLayoutGrid.Children.Remove(nodeView);
             }
             finally
             {
@@ -226,10 +226,10 @@ namespace HighEnergy.Controls
                         // only set BindingContext after the node has Parent != null
                         nodeView.Key.BindingContext = nodeView.Value;
 						nodeView.Value.ExpandAction = () => nodeView.Key.BuildVisualChildren();
-						nodeView.Key.ChildrenStackLayout.IsVisible = nodeView.Key.IsExpanded;
-						ChildrenStackLayout.Children.Add(nodeView.Key);
+						nodeView.Key._childrenStackLayout.IsVisible = nodeView.Key.IsExpanded;
+						_childrenStackLayout.Children.Add(nodeView.Key);
 
-						ChildrenStackLayout.SetBinding(StackLayout.IsVisibleProperty, new Binding("IsExpanded", BindingMode.TwoWay));
+						_childrenStackLayout.SetBinding(StackLayout.IsVisibleProperty, new Binding("IsExpanded", BindingMode.TwoWay));
 
                         // TODO: make sure to unsubscribe elsewhere
                         nodeView.Value.PropertyChanged += HandleListCountChanged;
@@ -260,33 +260,33 @@ namespace HighEnergy.Controls
         {
             IsExpanded = true;
 
-            MainLayoutGrid = new Grid
+            _mainLayoutGrid = new Grid
                 {
                     VerticalOptions = LayoutOptions.StartAndExpand,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     BackgroundColor = Color.Gray,
                     RowSpacing = 2
                 };
-            MainLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            MainLayoutGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            MainLayoutGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            _mainLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            _mainLayoutGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            _mainLayoutGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            HeaderView = new ContentView
+            _headerView = new ContentView
                 {
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     BackgroundColor = this.BackgroundColor
                 };
-            MainLayoutGrid.Children.Add(HeaderView);
+            _mainLayoutGrid.Children.Add(_headerView);
 
-            ChildrenStackLayout = new StackLayout
+            _childrenStackLayout = new StackLayout
             {
                 Orientation = this.Orientation,
                 BackgroundColor = Color.Blue,
                 Spacing = 0
             };
-            MainLayoutGrid.Children.Add(ChildrenStackLayout, 0, 1);
+            _mainLayoutGrid.Children.Add(_childrenStackLayout, 0, 1);
 
-            Children.Add(MainLayoutGrid);
+            Children.Add(_mainLayoutGrid);
 
             Spacing = 0;
             Padding = new Thickness(0);
