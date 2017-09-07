@@ -25,23 +25,22 @@ namespace HighEnergy.TreeView.Demo
                 };
 
             HeaderCreationFactory = 
-                () => new DemoTreeCardView
-                {
+                () => new TreeNodeView {
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     VerticalOptions = LayoutOptions.Start
                 };
 
-            HeaderCreationFactory = 
-                () =>
-                {
-                    var result = new DemoTreeCardView
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        VerticalOptions = LayoutOptions.Start
-                    };
-                    Debug.WriteLine("HeaderCreationFactory: new DemoTreeCardView");
-                    return result;
-                };
+            //HeaderCreationFactory = 
+            //    () =>
+            //    {
+            //        var result = new DemoTreeCardView
+            //        {
+            //            HorizontalOptions = LayoutOptions.FillAndExpand,
+            //            VerticalOptions = LayoutOptions.Start
+            //        };
+            //        Debug.WriteLine("HeaderCreationFactory: new DemoTreeCardView");
+            //        return result;
+            //    };
 
             BindingContext = ViewModel.MyTree;
 

@@ -24,7 +24,7 @@
 				<!---this is a very bad way to load images, very slow, need to cache them somehow -->
 <!--				<Image Source="{local:ImageResource CubesBrightColors.png}" Aspect="AspectFit" WidthRequest="24" VerticalOptions="Center"/>-->
 
-				<Label x:Name="TitleLabel" Text="{Binding Title}" Font="Bold,20" TextColor="Black" VerticalOptions="Center"/>  
+				<Label x:Name="TitleLabel" Text="{Binding Title}" Font="Bold,10" TextColor="Black" VerticalOptions="Center"/>  
 			</StackLayout>
 
 			<!-- right side -->

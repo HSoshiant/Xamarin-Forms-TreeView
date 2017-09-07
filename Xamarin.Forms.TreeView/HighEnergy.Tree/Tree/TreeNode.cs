@@ -13,35 +13,35 @@ namespace HighEnergy.Collections
         public TreeNode()
         {
             // call property setters to trigger setup and event notifications
-            _Parent = null;
-            _ChildNodes = new TreeNodeList<T>(this);
+            _parent = null;
+            _childNodes = new TreeNodeList<T>(this);
         }
 
         public TreeNode(T Value)
         {
             // call property setters to trigger setup and event notifications
             this.Value = Value;
-            _Parent = null;
-            _ChildNodes = new TreeNodeList<T>(this);
+            _parent = null;
+            _childNodes = new TreeNodeList<T>(this);
         }
 
         public TreeNode(T Value, TreeNode<T> Parent)
         {
             // call property setters to trigger setup and event notifications
             this.Value = Value;
-            _Parent = Parent;
-            _ChildNodes = new TreeNodeList<T>(this);
+            _parent = Parent;
+            _childNodes = new TreeNodeList<T>(this);
         }
 
         public ITreeNode ParentNode 
         { 
-            get { return _Parent; } 
+            get { return _parent; } 
         }
 
-        private ITreeNode<T> _Parent;
+        private ITreeNode<T> _parent;
         public ITreeNode<T> Parent
         {
-            get { return _Parent; }
+            get { return _parent; }
             set { SetParent(value, true); }
         }
 
@@ -60,11 +60,11 @@ namespace HighEnergy.Collections
                 oldParent.Children.Remove(this, updateParent: false);
 
             // update the backing field
-            _Parent = node;
+            _parent = node;
 
             // add this node to its new parent's children
-            if (_Parent != null && updateChildNodes)
-                _Parent.Children.Add(this, updateParent: false);
+            if (_parent != null && updateChildNodes)
+                _parent.Children.Add(this, updateParent: false);
 
             // signal the old parent that it has lost this child
             if (oldParent != null)
@@ -98,10 +98,10 @@ namespace HighEnergy.Collections
             get { return (Parent == null) ? this : Parent.Root; }
         }
 
-        private TreeNodeList<T> _ChildNodes;
+        private TreeNodeList<T> _childNodes;
         public TreeNodeList<T> Children
         {
-            get { return _ChildNodes; }
+            get { return _childNodes; }
         }
 
         // non-generic iterator for interface-based support (From TreeNodeView, for example)
@@ -196,24 +196,24 @@ namespace HighEnergy.Collections
                 child.OnHeightChanged();
         }
 
-        private T _Value;
+        private T _value;
         public T Value
         {
-            get { return _Value; }
+            get { return _value; }
             set
             {
-                if (value == null && _Value == null)
+                if (value == null && _value == null)
                     return;
 
-                if (value != null && _Value != null && value.Equals(_Value))
+                if (value != null && _value != null && value.Equals(_value))
                     return;
 
-                _Value = value;
+                _value = value;
                 OnPropertyChanged("Value");
 
                 // set Node if it's ITreeNodeAware
-                if (_Value != null && _Value is ITreeNodeAware<T>)
-                    (_Value as ITreeNodeAware<T>).Node = this;
+                if (_value != null && _value is ITreeNodeAware<T>)
+                    (_value as ITreeNodeAware<T>).Node = this;
             }
         }
 
@@ -232,17 +232,17 @@ namespace HighEnergy.Collections
                 Parent.OnDepthChanged();
         }
 
-        private UpDownTraversalType _DisposeTraversal = UpDownTraversalType.BottomUp;
+        private UpDownTraversalType _disposeTraversal = UpDownTraversalType.BottomUp;
         public UpDownTraversalType DisposeTraversal
         {
-            get { return _DisposeTraversal; }
-            set { _DisposeTraversal = value; }
+            get { return _disposeTraversal; }
+            set { _disposeTraversal = value; }
         }
 
-        private bool _IsDisposed;
+        private bool _isDisposed;
         public bool IsDisposed
         {
-            get { return _IsDisposed; }
+            get { return _isDisposed; }
         }
 
 		public Action ExpandAction { get; set; }
@@ -266,7 +266,7 @@ namespace HighEnergy.Collections
                         node.Dispose();
             }
 
-            _IsDisposed = true;
+            _isDisposed = true;
         }
 
         public event EventHandler Disposing;
