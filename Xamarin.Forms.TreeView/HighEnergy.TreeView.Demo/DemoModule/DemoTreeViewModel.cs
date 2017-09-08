@@ -25,6 +25,7 @@ namespace HighEnergy.TreeView.Demo
             MyTree = new DemoTreeNode { Title = "Root", Score = 0.5, IsExpanded = true };
 
             var a = MyTree.Children.Add(new DemoTreeNode { Title = "Branch A", Score = 0.75, IsExpanded = true });
+      return;
             a.Children.Add(new DemoTreeNode { Title = "Leaf A1", Score = 0.85, IsExpanded = true });
             a.Children.Add(new DemoTreeNode { Title = "Leaf A2", Score = 0.65, IsExpanded = true });
 
@@ -47,9 +48,9 @@ namespace HighEnergy.TreeView.Demo
         public async void InsertRandomNodes()
         {
             // insert 6 new nodes randomly into the tree, 1 every 5 seconds
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 20; i++)
             {
-                await Task.Delay(5000);
+                await Task.Delay(1000);
 
                 if (MyTree == null)
                     return;

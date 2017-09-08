@@ -71,6 +71,8 @@ namespace HighEnergy.Controls {
       if (node == null)
         throw new InvalidOperationException ("TreeNodeView currently only supports TreeNode-derived data binding sources.");
 
+      node.PropertyChanged -= HandleListCountChanged;
+      node.PropertyChanged += HandleListCountChanged;
       base.OnBindingContextChanged ( );
 
       // clear out any existing child nodes - the new data source replaces them
@@ -149,7 +151,6 @@ namespace HighEnergy.Controls {
       var bindingContextNode = (ITreeNode) BindingContext;
       if (bindingContextNode == null)
         return;
-
       // STEP 1: remove child visual tree nodes (TreeNodeViews) that don't correspond to an item in our data source
 
       var nodeViewsToRemove = new List<TreeNodeView> ( );
@@ -214,13 +215,14 @@ namespace HighEnergy.Controls {
     }
 
     void HandleListCountChanged (object sender, PropertyChangedEventArgs e) {
-      Device.BeginInvokeOnMainThread (( ) => {
-        if (e.PropertyName == "Count") {
-          var nodeView = ChildTreeNodeViews.Where (nv => nv.BindingContext == sender).FirstOrDefault ( );
-          if (nodeView != null)
+      if (e.PropertyName == "Count") {
+        var nodeView = sender == this.BindingContext ? this :
+          ChildTreeNodeViews.Where (nv => nv.BindingContext == sender).FirstOrDefault ( );
+        if (nodeView != null)
+          Device.BeginInvokeOnMainThread (( ) => {
             nodeView.BuildVisualChildren ( );
-        }
-      });
+          });
+      }
     }
 
     public void InitializeComponent ( ) {
@@ -259,7 +261,6 @@ namespace HighEnergy.Controls {
 
     public TreeNodeView ( ) : base ( ) {
       InitializeComponent ( );
-
       Debug.WriteLine ("new TreeNodeView");
     }
   }

@@ -7,14 +7,14 @@ namespace HighEnergy.TreeView.Demo
 {
     public class DemoTreeView : HighEnergy.Controls.TreeView
     {
-        DemoTreeViewModel ViewModel;
+        DemoTreeViewModel _viewModel;
 
         public DemoTreeView()
         {
             // these properties have to be set in a specific order, letting us know that we're doing some dumb things with properties and will need to 
             // TODO: fix this later
 
-            ViewModel = new DemoTreeViewModel();
+            _viewModel = new DemoTreeViewModel();
 
             NodeCreationFactory =
                 () => new TreeNodeView
@@ -25,7 +25,7 @@ namespace HighEnergy.TreeView.Demo
                 };
 
             HeaderCreationFactory = 
-                () => new TreeNodeView {
+                (it) => new DemoTreeCardView {
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     VerticalOptions = LayoutOptions.Start
                 };
@@ -42,9 +42,9 @@ namespace HighEnergy.TreeView.Demo
             //        return result;
             //    };
 
-            BindingContext = ViewModel.MyTree;
+            BindingContext = _viewModel.MyTree;
 
-            ViewModel.InsertRandomNodes();
+        //    _viewModel.InsertRandomNodes();
         }
     }
 }
