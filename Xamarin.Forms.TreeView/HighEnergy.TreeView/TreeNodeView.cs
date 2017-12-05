@@ -168,7 +168,7 @@ namespace HighEnergy.Controls {
       try {
         // perform removal in a batch
         foreach (TreeNodeView nodeView in nodeViewsToRemove)
-          _mainLayoutGrid.Children.Remove (nodeView);
+          _childrenStackLayout.Children.Remove (nodeView);
       } finally {
         // ensure we commit
         BatchCommit ( );
